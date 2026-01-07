@@ -206,6 +206,7 @@ class AdaptiveDimmer:
                     continue
                 
                 with self.monitor_lock:
+                    # Check running flag again inside the lock to ensure thread-safe termination
                     if not self.running:
                         break
                     
@@ -472,6 +473,7 @@ class DimmerGUI:
                             except Exception as e:
                                 self.add_log(f"Fehler beim Löschen des Overlays für Monitor {monitor_id}: {e}")
                     
+                    # Small delay to ensure windows are fully destroyed before creating new ones
                     time.sleep(0.1)
                     
                     for monitor_id in new_monitors:
@@ -499,6 +501,7 @@ class DimmerGUI:
             elif mode == MODE_LABELS[MODE_BOTH]:
                 active_monitors = [1, 2]
             else:
+                self.add_log(f"⚠️ Unbekannter Modus '{mode}', verwende Monitor 1 als Standard")
                 active_monitors = [1]
             
             self.add_log(f"Starte Abdunkler für Bildschirme: {active_monitors}...")
